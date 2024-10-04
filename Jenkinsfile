@@ -15,15 +15,25 @@ pipeline {
                 sh '''#!/bin/bash
                 echo 'Test Step: We run testing tool like pytest here'
 
-                # Fill out the path to conda and initialize it
-                sudo /opt/conda/bin/conda init
+                # Create virtual environment if it doesn't exist
+                if [ ! -d "mlip_env" ]; then
+                    python3 -m venv mlip_env
+                fi
 
-                # Activate the Conda environment and run pytest
-                sudo /opt/conda/bin/conda run -n my_env pytest
+                # Activate the virtual environment
+                source mlip_env/bin/activate
 
-                # Comment out the exit line after implementation
-                # echo 'pytest not runned'
-                # exit 1
+                # Upgrade pip within the venv
+                pip install --upgrade pip
+
+                # Install dependencies inside the virtual environment
+                pip install pandas pytest scikit-learn
+
+                # Run pytest
+                pytest
+
+                # Deactivate the virtual environment
+                deactivate
                 '''
             }
         }
